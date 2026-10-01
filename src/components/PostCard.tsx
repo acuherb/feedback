@@ -10,11 +10,11 @@ type PostCardProps = {
 }
 
 const statusLabels: Record<string, string> = {
-  open: 'Open',
-  planned: 'Planned',
-  in_progress: 'In Progress',
-  done: 'Done',
-  closed: 'Closed',
+  open: '开放中',
+  planned: '已计划',
+  in_progress: '进行中',
+  done: '已完成',
+  closed: '已关闭',
 }
 
 const allStatuses = ['open', 'planned', 'in_progress', 'done', 'closed']
@@ -48,17 +48,17 @@ export const PostCard: FC<PostCardProps> = ({ post, voted, isAdmin, adminToken }
                 </option>
               ))}
             </select>
-            <button type="submit" class="noscript-submit">Update</button>
+            <button type="submit" class="noscript-submit">更新</button>
             <button
               type="button"
               hx-delete={`/posts/${post.id}`}
               hx-headers={JSON.stringify({ Authorization: `Bearer ${adminToken}` })}
               hx-target="closest .post-card"
               hx-swap="outerHTML"
-              hx-confirm="Delete this post?"
+              hx-confirm="确定要删除这条反馈吗？"
               class="delete-button"
             >
-              Delete
+              删除
             </button>
           </form>
         )}

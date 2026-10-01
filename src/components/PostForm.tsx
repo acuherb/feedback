@@ -16,39 +16,39 @@ export const PostForm: FC<PostFormProps> = ({ turnstileSiteKey }) => {
       class="post-form"
     >
       <div class="form-group">
-        <label for="title">Title *</label>
+        <label for="title">标题 *</label>
         <input
           type="text"
           id="title"
           name="title"
           required
           maxlength={200}
-          placeholder="What's your feedback or feature request?"
+          placeholder="请简要描述您的反馈或建议"
         />
       </div>
       <div class="form-group">
-        <label for="description">Description</label>
+        <label for="description">详细描述</label>
         <textarea
           id="description"
           name="description"
           rows={3}
           maxlength={2000}
-          placeholder="Add more details (optional)"
+          placeholder="补充更多细节（选填）"
         ></textarea>
       </div>
       <div class="form-group">
-        <label for="email">Email (optional)</label>
+        <label for="email">邮箱（选填）</label>
         <input
           type="email"
           id="email"
           name="email"
-          placeholder="Get notified about updates"
+          placeholder="留下邮箱，状态变化时通知您"
         />
       </div>
       {turnstileSiteKey && (
         <div class="cf-turnstile" data-sitekey={turnstileSiteKey}></div>
       )}
-      <button type="submit">Submit Feedback</button>
+      <button type="submit">提交反馈</button>
     </form>
   )
 }

@@ -12,7 +12,7 @@ document.addEventListener("submit", function (e) {
   root.classList.toggle("theme-dark");
 
   // Persist to localStorage
-  localStorage.setItem("holler-theme", newTheme);
+  localStorage.setItem("feedback-theme", newTheme);
 
   // Update form for no-JS fallback correctness
   var nextTheme = newTheme === "dark" ? "light" : "dark";
@@ -22,7 +22,7 @@ document.addEventListener("submit", function (e) {
 
   // Update aria-label
   var btn = form.querySelector(".theme-switch");
-  if (btn) btn.setAttribute("aria-label", "Switch to " + nextTheme + " mode");
+  if (btn) btn.setAttribute("aria-label", (nextTheme === "dark" ? "切换到暗黑模式" : "切换到明亮模式"));
 
   // Set cookie server-side (fire and forget)
   fetch("/_theme?theme=" + newTheme, { method: "POST" });

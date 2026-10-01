@@ -9,6 +9,7 @@ type ThemeToggleProps = {
 export const ThemeToggle: FC<ThemeToggleProps> = ({ currentTheme }) => {
   const isDark = currentTheme === 'dark'
   const nextTheme: Theme = isDark ? 'light' : 'dark'
+  const nextThemeLabel = isDark ? '明亮' : '暗黑'
 
   return (
     <form
@@ -20,7 +21,7 @@ export const ThemeToggle: FC<ThemeToggleProps> = ({ currentTheme }) => {
       <button
         type="submit"
         class="theme-switch"
-        aria-label={`Switch to ${nextTheme} mode`}
+        aria-label={`切换到${nextThemeLabel}模式`}
       >
         <span class="theme-switch-track">
           <svg class="theme-switch-sun" viewBox="0 0 24 24" aria-hidden="true">

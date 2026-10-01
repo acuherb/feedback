@@ -49,7 +49,7 @@ function getVisitorId(c: Context<{ Bindings: Bindings }>): string {
 type Theme = 'light' | 'dark'
 
 function getTheme(c: Context<{ Bindings: Bindings }>): Theme {
-  const cookie = getCookie(c, 'holler-theme')
+  const cookie = getCookie(c, 'feedback-theme')
   if (cookie === 'dark') return 'dark'
   return 'light'
 }
@@ -58,7 +58,7 @@ function getTheme(c: Context<{ Bindings: Bindings }>): Theme {
 const adminAuth = createMiddleware<{ Bindings: Bindings }>(async (c, next) => {
   const token = c.env.ADMIN_TOKEN
   if (!token) {
-    return c.text('Admin not configured', 503)
+    return c.text('管理员未配置', 503)
   }
 
   const authHeader = c.req.header('Authorization')
@@ -66,7 +66,7 @@ const adminAuth = createMiddleware<{ Bindings: Bindings }>(async (c, next) => {
   const providedToken = authHeader?.replace('Bearer ', '') || queryToken
 
   if (providedToken !== token) {
-    return c.text('Unauthorized', 401)
+    return c.text('未授权', 401)
   }
 
   await next()
@@ -77,7 +77,7 @@ app.post('/_theme', (c) => {
   const theme = c.req.query('theme')
   const resolvedTheme: Theme = theme === 'dark' ? 'dark' : 'light'
 
-  setCookie(c, 'holler-theme', resolvedTheme, {
+  setCookie(c, 'feedback-theme', resolvedTheme, {
     httpOnly: true,
     secure: true,
     sameSite: 'Lax',
@@ -117,7 +117,7 @@ app.get('/', async (c) => {
   const postListHtml = (
     <div id="post-list">
       {posts.length === 0 ? (
-        <p class="empty-state">No feedback yet. Be the first to share!</p>
+        <p class="empty-state">还没有反馈，来做第一个分享的人吧！</p>
       ) : (
         posts.map((post) => (
           <PostCard post={post} voted={votedSet.has(post.id)} isAdmin={isAdmin} adminToken={adminToken} />
@@ -140,7 +140,7 @@ app.get('/', async (c) => {
         <input
           type="search"
           name="q"
-          placeholder="Search feedback..."
+          placeholder="搜索反馈..."
           hx-get="/"
           hx-trigger="keyup changed delay:300ms"
           hx-target="#post-list"
@@ -155,9 +155,9 @@ app.get('/', async (c) => {
           hx-target="#post-list"
           hx-include="[name='q'],[name='status']"
         >
-          <option value="votes" selected={sort === 'votes' || !sort}>Top Voted</option>
-          <option value="newest" selected={sort === 'newest'}>Newest</option>
-          <option value="oldest" selected={sort === 'oldest'}>Oldest</option>
+          <option value="votes" selected={sort === 'votes' || !sort}>投票最多</option>
+          <option value="newest" selected={sort === 'newest'}>最新发布</option>
+          <option value="oldest" selected={sort === 'oldest'}>最早发布</option>
         </select>
         <select
           name="status"
@@ -166,12 +166,12 @@ app.get('/', async (c) => {
           hx-target="#post-list"
           hx-include="[name='q'],[name='sort']"
         >
-          <option value="">All Statuses</option>
-          <option value="open" selected={status === 'open'}>Open</option>
-          <option value="planned" selected={status === 'planned'}>Planned</option>
-          <option value="in_progress" selected={status === 'in_progress'}>In Progress</option>
-          <option value="done" selected={status === 'done'}>Done</option>
-          <option value="closed" selected={status === 'closed'}>Closed</option>
+          <option value="">全部状态</option>
+          <option value="open" selected={status === 'open'}>开放中</option>
+          <option value="planned" selected={status === 'planned'}>已计划</option>
+          <option value="in_progress" selected={status === 'in_progress'}>进行中</option>
+          <option value="done" selected={status === 'done'}>已完成</option>
+          <option value="closed" selected={status === 'closed'}>已关闭</option>
         </select>
       </section>
 
@@ -183,7 +183,7 @@ app.get('/', async (c) => {
 // Show new post form page (for no-JS navigation)
 app.get('/posts/new', (c) => {
   return c.html(
-    <Layout title="New Feedback" includeTurnstile={!!c.env.TURNSTILE_SITE_KEY} theme={getTheme(c)}>
+    <Layout title="新的反馈" includeTurnstile={!!c.env.TURNSTILE_SITE_KEY} theme={getTheme(c)}>
       <PostForm turnstileSiteKey={c.env.TURNSTILE_SITE_KEY} />
     </Layout>
   )
@@ -197,12 +197,12 @@ app.post('/posts', async (c) => {
   if (c.env.TURNSTILE_SECRET) {
     const turnstileToken = body['cf-turnstile-response'] as string
     if (!turnstileToken) {
-      return c.html(<p class="error">Please complete the captcha verification</p>, 400)
+      return c.html(<p class="error">请完成人机验证</p>, 400)
     }
     const ip = c.req.header('CF-Connecting-IP') || ''
     const valid = await verifyTurnstile(c.env.TURNSTILE_SECRET, turnstileToken, ip)
     if (!valid) {
-      return c.html(<p class="error">Captcha verification failed. Please try again.</p>, 403)
+      return c.html(<p class="error">人机验证失败，请重试。</p>, 403)
     }
   }
 
@@ -212,7 +212,7 @@ app.post('/posts', async (c) => {
 
   // Validate
   if (!title || title.length > 200) {
-    return c.html(<p class="error">Title is required (max 200 characters)</p>, 400)
+    return c.html(<p class="error">标题不能为空，且最多 200 字。</p>, 400)
   }
 
   const post = await createPost(c.env.DB, {
@@ -233,7 +233,7 @@ app.post('/posts', async (c) => {
 // Vote toggle
 app.post('/posts/:id/vote', async (c) => {
   const postId = parseInt(c.req.param('id'), 10)
-  if (isNaN(postId)) return c.text('Invalid post ID', 400)
+  if (isNaN(postId)) return c.text('无效的反馈 ID', 400)
 
   const visitorId = getVisitorId(c)
   const { voted, votes } = await toggleVote(c.env.DB, postId, visitorId)
@@ -250,17 +250,17 @@ app.post('/posts/:id/vote', async (c) => {
 // Admin: update post status
 app.post('/posts/:id/status', adminAuth, async (c) => {
   const postId = parseInt(c.req.param('id'), 10)
-  if (isNaN(postId)) return c.text('Invalid post ID', 400)
+  if (isNaN(postId)) return c.text('无效的反馈 ID', 400)
 
   const body = await c.req.parseBody()
   const status = body['status'] as PostStatus
   const validStatuses = ['open', 'planned', 'in_progress', 'done', 'closed']
   if (!validStatuses.includes(status)) {
-    return c.text('Invalid status', 400)
+    return c.text('无效的状态', 400)
   }
 
   const post = await updatePostStatus(c.env.DB, postId, status)
-  if (!post) return c.text('Post not found', 404)
+  if (!post) return c.text('反馈不存在', 404)
 
   const visitorId = getVisitorId(c)
   const voted = await hasVoted(c.env.DB, postId, visitorId)
@@ -276,10 +276,10 @@ app.post('/posts/:id/status', adminAuth, async (c) => {
 // Admin: delete post
 app.delete('/posts/:id', adminAuth, async (c) => {
   const postId = parseInt(c.req.param('id'), 10)
-  if (isNaN(postId)) return c.text('Invalid post ID', 400)
+  if (isNaN(postId)) return c.text('无效的反馈 ID', 400)
 
   const deleted = await deletePost(c.env.DB, postId)
-  if (!deleted) return c.text('Post not found', 404)
+  if (!deleted) return c.text('反馈不存在', 404)
 
   // HTMX: return empty to remove the element
   if (c.req.header('HX-Request')) {
