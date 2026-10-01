@@ -288,5 +288,12 @@ app.delete('/posts/:id', adminAuth, async (c) => {
 
   return c.redirect('/')
 })
-
+// 临时调试路由（确认后可以删除）
+app.get('/_debug-env', (c) => {
+  return c.json({
+    hasAdminToken: !!c.env.ADMIN_TOKEN,
+    adminTokenLength: c.env.ADMIN_TOKEN ? c.env.ADMIN_TOKEN.length : 0,
+    hasDb: !!c.env.DB,
+  })
+})
 export default app

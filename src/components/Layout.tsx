@@ -39,7 +39,7 @@ export const Layout: FC<LayoutProps> = ({ title, includeTurnstile, theme = 'ligh
           {children}
         </main>
         <footer>
-          <p>由 <a href="https://github.com/wassertim/holler">Holler</a> 驱动</p>
+          <p>© 2026 观颐斋 · 基于 Holler 构建</p>
         </footer>
         <script src="/theme.js"></script>
       </body>
