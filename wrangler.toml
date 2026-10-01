@@ -1,4 +1,4 @@
-name = "acuherb-feedback"
+name = "feedback"
 main = "src/index.tsx"
 compatibility_date = "2025-01-01"
 
@@ -9,7 +9,7 @@ directory = "./public"
 binding = "DB"
 database_name = "feedback-db"
 # 本地开发保持 "local"；部署前用 `npx wrangler d1 create feedback-db` 返回的真实 UUID 替换
-database_id = "local"
+database_id = "8284fa20-621b-4659-96cf-919a254565b3"
 migrations_dir = "migrations"
 
 # 环境变量 —— 生产环境通过 `wrangler secret put` 设置
