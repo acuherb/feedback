@@ -1,0 +1,19 @@
+name = "holler"
+main = "src/index.tsx"
+compatibility_date = "2025-01-01"
+
+[assets]
+directory = "./public"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "holler-db"
+database_id = "local"
+migrations_dir = "migrations"
+
+# Environment variables - set via `wrangler secret put` in production
+# or in a .dev.vars file for local development:
+# [vars]
+# TURNSTILE_SITE_KEY = "your-site-key"
+# TURNSTILE_SECRET = "your-secret-key"
+# ADMIN_TOKEN = "your-admin-token"

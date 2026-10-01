@@ -1,0 +1,32 @@
+{
+  "name": "holler",
+  "version": "0.1.0",
+  "description": "Lightweight feedback board. HTMX + Cloudflare Workers + D1.",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler d1 migrations apply holler-db --local && wrangler dev",
+    "build": "wrangler deploy --dry-run --outdir dist",
+    "deploy": "wrangler d1 migrations apply DB --remote && wrangler deploy",
+    "test": "npm run build",
+    "prepare": "husky"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wassertim/holler.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wassertim/holler/issues"
+  },
+  "homepage": "https://github.com/wassertim/holler#readme",
+  "dependencies": {
+    "hono": "^4"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4",
+    "husky": "^9.1.7",
+    "wrangler": "^4.61.1"
+  }
+}
