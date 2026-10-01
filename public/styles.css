@@ -1,17 +1,17 @@
 /* ==========================================================================
-   Swiss Design System -- Holler
-   International Typographic Style: grid, type, whitespace, restraint
+   瑞士设计系统 -- Holler
+   国际主义排版风格：网格、字体、留白、克制
    ========================================================================== */
 
-/* Customize -- change these tokens in :root to match your brand:
-   --font-sans      Font stack         "Inter", "Helvetica Neue", …
-   --color-accent   Primary action     #e53935
-   --color-bg       Background         #ffffff
-   --color-text     Body text          #111111
-   --radius         Border radius      2px  (try 8px for rounded)
-   --max-width      Content width      720px                         */
+/* 自定义 -- 修改 :root 中的这些变量以匹配你的品牌：
+   --font-sans      字体栈           "Inter", "Helvetica Neue", …
+   --color-accent   主操作色          #e53935
+   --color-bg       背景             #ffffff
+   --color-text     正文文字          #111111
+   --radius         圆角             2px  （试试 8px 得到圆角效果）
+   --max-width      内容宽度         720px                         */
 
-/* Reset */
+/* 重置 */
 *,
 *::before,
 *::after {
@@ -20,12 +20,12 @@
   padding: 0;
 }
 
-/* Design Tokens -- Light (default) */
+/* 设计变量 -- 浅色（默认） */
 :root {
-  /* Typography */
+  /* 字体 */
   --font-sans: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
 
-  /* Type Scale (Major Third 1.250) */
+  /* 字号比例（大三度 1.250） */
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
   --text-base: 1rem;
@@ -33,7 +33,7 @@
   --text-xl: 1.5rem;
   --text-2xl: 2rem;
 
-  /* Spacing (4px baseline grid) */
+  /* 间距（4px 基线网格） */
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
@@ -43,11 +43,11 @@
   --space-12: 3rem;
   --space-16: 4rem;
 
-  /* Layout */
+  /* 布局 */
   --max-width: 720px;
   --radius: 2px;
 
-  /* Colors -- Light */
+  /* 颜色 -- 浅色 */
   --color-bg: #ffffff;
   --color-text: #111111;
   --color-text-muted: #6b6b6b;
@@ -56,7 +56,7 @@
   --color-border: #e0e0e0;
 }
 
-/* Design Tokens -- Dark */
+/* 设计变量 -- 深色 */
 .theme-dark {
   --color-bg: #121212;
   --color-text: #e8e8e8;
@@ -66,7 +66,7 @@
   --color-border: #2e2e2e;
 }
 
-/* Base */
+/* 基础 */
 body {
   font-family: var(--font-sans);
   background: var(--color-bg);
@@ -80,7 +80,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Header */
+/* 页头 */
 header {
   margin-bottom: var(--space-12);
 }
@@ -111,7 +111,7 @@ header p {
   letter-spacing: 0.01em;
 }
 
-/* Theme Toggle -- Light Switch */
+/* 主题切换 -- 开关样式 */
 .theme-toggle {
   --toggle-size: 32px;
   flex-shrink: 0;
@@ -201,7 +201,7 @@ header p {
   opacity: 1;
 }
 
-/* Post Cards */
+/* 反馈卡片 */
 .post-card {
   display: flex;
   gap: var(--space-6);
@@ -241,7 +241,7 @@ header p {
   color: var(--color-text-muted);
 }
 
-/* Vote Button */
+/* 投票按钮 */
 .vote-form {
   flex-shrink: 0;
 }
@@ -280,7 +280,7 @@ header p {
   letter-spacing: -0.02em;
 }
 
-/* Form */
+/* 表单 */
 .post-form {
   border-top: 2px solid var(--color-text);
   padding: var(--space-6) 0;
@@ -359,7 +359,7 @@ header p {
   background: var(--color-accent-hover);
 }
 
-/* Status Badges */
+/* 状态标签 */
 .status-badge {
   display: inline-block;
   padding: var(--space-1) var(--space-2);
@@ -402,7 +402,7 @@ header p {
   opacity: 0.6;
 }
 
-/* Controls */
+/* 筛选控件 */
 .controls {
   display: flex;
   gap: var(--space-3);
@@ -473,7 +473,7 @@ header p {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1.5l5 5 5-5' stroke='%23BDBDBD' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 }
 
-/* Admin Controls */
+/* 管理员控件 */
 .admin-controls {
   display: flex;
   gap: var(--space-3);
@@ -519,7 +519,7 @@ header p {
   color: #ffffff;
 }
 
-/* Empty State */
+/* 空状态 */
 .empty-state {
   color: var(--color-text-muted);
   padding: var(--space-16) var(--space-4);
@@ -527,14 +527,14 @@ header p {
   border-top: 1px solid var(--color-border);
 }
 
-/* Error */
+/* 错误提示 */
 .error {
   color: var(--color-accent);
   font-size: var(--text-sm);
   padding: var(--space-2);
 }
 
-/* Footer */
+/* 页脚 */
 footer {
   margin-top: var(--space-16);
   padding-top: var(--space-6);
@@ -553,21 +553,21 @@ footer a:hover {
 }
 
 /* ==========================================================================
-   Phase 3: Polish -- Accessibility, Reduced Motion, Progressive Enhancement
+   阶段 3：打磨 -- 无障碍、减少动效、渐进增强
    ========================================================================== */
 
-/* Focus Indicators -- WCAG 2.4.13 */
+/* 焦点指示器 -- WCAG 2.4.13 */
 :focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
 
-/* Remove default outline for mouse/touch users */
+/* 为鼠标/触摸用户移除默认轮廓 */
 :focus:not(:focus-visible) {
   outline: none;
 }
 
-/* Reduced Motion */
+/* 减少动效 */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -578,12 +578,12 @@ footer a:hover {
   }
 }
 
-/* Progressive Enhancement */
+/* 渐进增强 */
 .js-enabled .noscript-submit {
   display: none;
 }
 
-/* Responsive */
+/* 响应式 */
 @media (max-width: 480px) {
   body {
     padding: var(--space-6) var(--space-4);

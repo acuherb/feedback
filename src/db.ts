@@ -22,22 +22,37 @@ export async function listPosts(
 ): Promise<Post[]> {
   const { status, sort = 'votes', search } = options
 
-  // If search query provided, use FTS5
+  // 如果提供了搜索词，优先使用 FTS5
+  // trigram 分词器要求查询词至少 3 个字符，短词走 LIKE 兜底
   if (search) {
+    if (search.length >= 3) {
+      const query = `
+        SELECT p.* FROM posts p
+        INNER JOIN posts_fts ON posts_fts.rowid = p.id
+        WHERE posts_fts MATCH ?
+        ${status ? 'AND p.status = ?' : ''}
+        ORDER BY rank
+      `
+      const bindings: string[] = [search]
+      if (status) bindings.push(status)
+      const result = await db.prepare(query).bind(...bindings).all<Post>()
+      return result.results
+    }
+
+    // 短查询（1-2 个字符）：使用 LIKE 模糊匹配兜底
+    const like = `%${search}%`
     const query = `
-      SELECT p.* FROM posts p
-      INNER JOIN posts_fts ON posts_fts.rowid = p.id
-      WHERE posts_fts MATCH ?
-      ${status ? 'AND p.status = ?' : ''}
-      ORDER BY rank
+      SELECT * FROM posts
+      WHERE (title LIKE ? OR description LIKE ?)
+      ${status ? 'AND status = ?' : ''}
+      ORDER BY votes DESC, created_at DESC
     `
-    const bindings: string[] = [search]
-    if (status) bindings.push(status)
+    const bindings = status ? [like, like, status] : [like, like]
     const result = await db.prepare(query).bind(...bindings).all<Post>()
     return result.results
   }
 
-  // Standard listing with optional status filter
+  // 标准列表展示，可选状态过滤
   let orderClause: string
   switch (sort) {
     case 'newest': orderClause = 'p.created_at DESC'; break
@@ -70,7 +85,7 @@ export async function createPost(
     .bind(data.title, data.description || null, data.email || null)
     .first<Post>()
   if (!result) {
-    throw new Error('Failed to create post: no row returned')
+    throw new Error('创建反馈失败：未返回数据行')
   }
   return result
 }
@@ -80,18 +95,18 @@ export async function toggleVote(
   postId: number,
   visitorId: string
 ): Promise<{ voted: boolean; votes: number }> {
-  // Try to insert the vote; IGNORE if it already exists (unique constraint)
+  // 尝试插入投票；如果已存在（唯一约束），则 IGNORE
   const insertResult = await db
     .prepare('INSERT OR IGNORE INTO votes (post_id, visitor_id) VALUES (?, ?)')
     .bind(postId, visitorId)
     .run()
 
   if (insertResult.meta.changes > 0) {
-    // Insert succeeded — new vote
+    // 插入成功——新增投票
     await db.prepare('UPDATE posts SET votes = votes + 1 WHERE id = ?')
       .bind(postId).run()
   } else {
-    // Insert was ignored — already voted, so remove it
+    // 插入被忽略——已经投过票，因此移除投票
     await db.prepare('DELETE FROM votes WHERE post_id = ? AND visitor_id = ?')
       .bind(postId, visitorId).run()
     await db.prepare('UPDATE posts SET votes = votes - 1 WHERE id = ?')
@@ -101,7 +116,7 @@ export async function toggleVote(
   const post = await db.prepare('SELECT votes FROM posts WHERE id = ?')
     .bind(postId).first<{ votes: number }>()
   if (!post) {
-    throw new Error('Post not found after vote toggle')
+    throw new Error('投票切换后未找到该反馈')
   }
 
   return { voted: insertResult.meta.changes > 0, votes: post.votes }

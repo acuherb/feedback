@@ -1,49 +1,49 @@
 # CLAUDE.md
 
-Lightweight, open-source feedback board. HTMX + Cloudflare Workers + D1. Deploy in one click.
+轻量级、开源反馈板。HTMX + Cloudflare Workers + D1。一键部署。
 
-## CRITICAL RULE - READ FIRST
+## 关键规则——首先阅读
 
-**NEVER ADD CLAUDE ATTRIBUTION ANYWHERE - EVER**
+**任何地方都绝不要添加 CLAUDE 署名——永远不要**
 
-No mentions of AI assistance, Claude, or automated generation in:
+不得在以下位置提及 AI 协助、Claude 或自动生成：
 
-- Git commits or PR descriptions
-- Code comments or documentation
-- GitHub issues or any output
+- Git 提交或 PR 描述
+- 代码注释或文档
+- GitHub issue 或任何输出
 
-**This rule has ZERO EXCEPTIONS.**
+**此规则零例外。**
 
-## Development Principles
+## 开发原则
 
-**YAGNI** - Build only what's needed now. No speculative features.
+**YAGNI**——只构建当前所需。不要推测性功能。
 
-**KISS** - Simplest solution that works. No premature optimization.
+**KISS**——能工作的最简单方案。不要过早优化。
 
-**Good Architecture** - Clean separation of concerns, predictable patterns, maintainable structure.
+**良好架构**——关注点清晰分离、模式可预测、结构可维护。
 
-## Tech Stack
+## 技术栈
 
-| Layer | Technology |
+| 层级 | 技术 |
 |-------|------------|
-| Frontend | HTMX + minimal CSS |
-| Templating | Hono JSX (server-rendered) |
+| 前端 | HTMX + 极简 CSS |
+| 模板 | Hono JSX（服务端渲染） |
 | API | Cloudflare Workers + Hono |
-| Database | D1 (SQLite) + FTS5 for search |
-| Spam prevention | Turnstile |
-| Admin auth | Cloudflare Access or simple token |
+| 数据库 | D1 (SQLite) + FTS5 用于搜索 |
+| 防垃圾 | Turnstile |
+| 管理员认证 | Cloudflare Access 或简单 token |
 
-## Project Structure
+## 项目结构
 
 ```
 holler/
 ├── src/
-│   ├── index.tsx         # Worker entry + Hono routes
-│   ├── db.ts             # D1 queries
-│   ├── components/       # Hono JSX components
-│   │   ├── Layout.tsx    # HTML shell, head, HTMX/CSS includes
-│   │   ├── PostCard.tsx  # Single feedback post display
-│   │   ├── PostForm.tsx  # Feedback submission form
+│   ├── index.tsx         # Worker 入口 + Hono 路由
+│   ├── db.ts             # D1 查询
+│   ├── components/       # Hono JSX 组件
+│   │   ├── Layout.tsx    # HTML 外壳、head、HTMX/CSS 引入
+│   │   ├── PostCard.tsx  # 单条反馈帖展示
+│   │   ├── PostForm.tsx  # 反馈提交表单
 │   │   └── VoteButton.tsx
 │   └── schema.sql
 ├── migrations/
@@ -55,65 +55,65 @@ holler/
 └── CLAUDE.md
 ```
 
-## Key Patterns
+## 关键模式
 
 ### HTMX
 
-- Use `hx-post`, `hx-get`, `hx-swap`, `hx-target` for interactions
-- Progressive enhancement: wrap HTMX elements in `<form>` for no-JS fallback
-- Return HTML fragments from API endpoints for HTMX swaps
-- Check `c.req.header('HX-Request')` to detect HTMX vs full page requests
+- 使用 `hx-post`、`hx-get`、`hx-swap`、`hx-target` 进行交互
+- 渐进增强：将 HTMX 元素包裹在 `<form>` 中，作为无 JS 回退
+- 从 API 端点返回 HTML 片段，用于 HTMX 交换
+- 检查 `c.req.header('HX-Request')` 以区分 HTMX 请求与完整页面请求
 
 ### Hono JSX
 
-- All HTML is server-rendered via Hono JSX components
-- Use `c.html(...)` to return HTML responses
-- Layout component wraps all pages with `<head>`, HTMX script, CSS
+- 所有 HTML 都通过 Hono JSX 组件服务端渲染
+- 使用 `c.html(...)` 返回 HTML 响应
+- Layout 组件用 `<head>`、HTMX script、CSS 包裹所有页面
 
 ### D1 / SQLite
 
-- Access via `c.env.DB` binding
-- Parameterized queries: `db.prepare('...').bind(val).all()`
-- FTS5 for full-text search
-- Migrations in `migrations/` directory
+- 通过 `c.env.DB` 绑定访问
+- 参数化查询：`db.prepare('...').bind(val).all()`
+- 使用 FTS5 进行全文搜索
+- 迁移文件位于 `migrations/` 目录
 
 ### Cloudflare Workers
 
-- Bindings in `wrangler.toml`
-- Turnstile verification via `https://challenges.cloudflare.com/turnstile/v0/siteverify`
-- Deploy: `wrangler deploy`
-- Local dev: `wrangler dev`
+- 绑定配置在 `wrangler.toml`
+- 通过 `https://challenges.cloudflare.com/turnstile/v0/siteverify` 进行 Turnstile 验证
+- 部署：`wrangler deploy`
+- 本地开发：`wrangler dev`
 
-## Commands
+## 命令
 
 ```bash
-npm run dev        # Local development with wrangler
-npm run build      # Build for production
-npm run deploy     # Deploy to Cloudflare Workers
+npm run dev        # 使用 wrangler 进行本地开发
+npm run build      # 生产构建
+npm run deploy     # 部署到 Cloudflare Workers
 ```
 
-## AI Commands
+## AI 命令
 
-| Command | Description |
+| 命令 | 描述 |
 |---------|-------------|
-| `/implement [issue] [--auto]` | Implement feature with autonomous or classical mode |
-| `/review` | Review current PR and post review to GitHub |
-| `/fix-remarks [all \| specific]` | Fix PR review comments |
-| `/brainstorm [idea]` | Interactive discovery to refine vague ideas into clear task specs |
+| `/implement [issue] [--auto]` | 以自主模式或经典模式实现功能 |
+| `/review` | 审查当前 PR 并将审查结果发布到 GitHub |
+| `/fix-remarks [all \| specific]` | 修复 PR 审查评论 |
+| `/brainstorm [idea]` | 交互式发现，将模糊想法精炼为清晰的任务规格 |
 
-## AI Agents
+## AI 代理
 
-| Agent | Model | Use Case |
+| 代理 | 模型 | 用例 |
 |-------|-------|----------|
-| `implementation-planner` | opus | Feature planning with phases and dependency analysis |
-| `holler-coder` | opus | Implements single phases from plans (fresh context) |
-| `code-reviewer` | opus | Reviews PR changes and posts to GitHub via bot token |
-| `technical-researcher` | opus | Researches technical topics, patterns, and competitor approaches |
+| `implementation-planner` | opus | 功能规划，包含阶段和依赖分析 |
+| `holler-coder` | opus | 从计划中实现单个阶段（全新上下文） |
+| `code-reviewer` | opus | 审查 PR 变更，并通过 bot token 发布到 GitHub |
+| `technical-researcher` | opus | 研究技术主题、模式和竞品方法 |
 
 ## GitHub Bot
 
-Reviews are posted via a bot account using `.claude/scripts/gh-bot`. Set `GH_BOT_TOKEN` environment variable with a GitHub PAT that has repo access.
+审查通过机器人账号使用 `.claude/scripts/gh-bot` 发布。设置 `GH_BOT_TOKEN` 环境变量，值为具有 repo 访问权限的 GitHub PAT。
 
-## Self-Hosting
+## 自托管
 
-One-click deploy via "Deploy to Cloudflare" button. D1 database + migrations auto-provisioned. Users only need to create a Turnstile widget manually.
+通过 “Deploy to Cloudflare” 按钮一键部署。D1 数据库 + 迁移自动配置。用户只需手动创建 Turnstile 小部件。

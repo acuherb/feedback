@@ -6,14 +6,14 @@
   "scripts": {
     "dev": "wrangler d1 migrations apply feedback-db --local && wrangler dev",
     "build": "wrangler deploy --dry-run --outdir dist",
-    "deploy": "wrangler d1 migrations apply DB --remote && wrangler deploy",
+    "deploy": "wrangler d1 migrations apply feedback-db --remote && wrangler deploy",
     "test": "npm run build"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/acuherb/feedback.git"
   },
-  "keywords": [],
+  "keywords": ["feedback", "htmx", "cloudflare-workers", "d1", "hono"],
   "author": "Acuherb",
   "license": "MIT",
   "bugs": {

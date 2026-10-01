@@ -8,11 +8,12 @@ directory = "./public"
 [[d1_databases]]
 binding = "DB"
 database_name = "feedback-db"
+# 本地开发保持 "local"；部署前用 `npx wrangler d1 create feedback-db` 返回的真实 UUID 替换
 database_id = "local"
 migrations_dir = "migrations"
 
-# Environment variables - set via `wrangler secret put` in production
-# or in a .dev.vars file for local development:
+# 环境变量 —— 生产环境通过 `wrangler secret put` 设置
+# 或本地开发时放在 .dev.vars 文件中：
 # [vars]
 # TURNSTILE_SITE_KEY = "your-site-key"
 # TURNSTILE_SECRET = "your-secret-key"

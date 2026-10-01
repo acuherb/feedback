@@ -1,4 +1,4 @@
--- Posts table
+-- 帖子表
 CREATE TABLE posts (
   id INTEGER PRIMARY KEY,
   title TEXT NOT NULL,
@@ -9,7 +9,7 @@ CREATE TABLE posts (
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
--- Votes table (one vote per visitor per post)
+-- 投票表（每位访客对每条反馈只能投一票）
 CREATE TABLE votes (
   post_id INTEGER,
   visitor_id TEXT,
@@ -17,15 +17,17 @@ CREATE TABLE votes (
   FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
 );
 
--- Full-text search with FTS5 (use lowercase 'fts5' -- case-sensitive on D1)
+-- 使用 FTS5 进行全文搜索（'fts5' 必须小写，D1 上大小写敏感）
+-- 使用 trigram 分词器以支持中文子串搜索
 CREATE VIRTUAL TABLE posts_fts USING fts5(
   title,
   description,
   content='posts',
-  content_rowid='id'
+  content_rowid='id',
+  tokenize='trigram'
 );
 
--- Triggers to keep FTS index in sync
+-- 保持 FTS 索引同步的触发器
 CREATE TRIGGER posts_ai AFTER INSERT ON posts BEGIN
   INSERT INTO posts_fts(rowid, title, description)
   VALUES (new.id, new.title, new.description);

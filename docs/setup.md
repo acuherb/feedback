@@ -1,11 +1,11 @@
-# Setup Guide
+# 设置指南
 
-## Prerequisites
+## 前置条件
 
-- [Node.js](https://nodejs.org/) (v18+)
-- A [Cloudflare account](https://dash.cloudflare.com/sign-up) (free tier works)
+- [Node.js](https://nodejs.org/)（v18+）
+- 一个 [Cloudflare 账户](https://dash.cloudflare.com/sign-up)（免费层即可）
 
-## Local Development
+## 本地开发
 
 ```bash
 git clone https://github.com/wassertim/holler.git
@@ -15,31 +15,31 @@ npx wrangler d1 migrations apply holler-db --local
 npm run dev
 ```
 
-This starts a local server at `http://localhost:8787` with a local D1 database. Migrations must be applied before the first run.
+这会在 `http://localhost:8787` 启动一个本地服务器，并使用本地 D1 数据库。首次运行前必须先应用迁移。
 
-Turnstile verification is skipped when `TURNSTILE_SECRET` is not configured, so local development works without any setup.
+当未配置 `TURNSTILE_SECRET` 时，会跳过 Turnstile 验证，因此本地开发无需任何设置即可运行。
 
-### Admin Access (Local)
+### 管理员访问（本地）
 
-Create a `.dev.vars` file in the project root:
+在项目根目录创建 `.dev.vars` 文件：
 
 ```
 ADMIN_TOKEN=test123
 ```
 
-Then visit `http://localhost:8787/?token=test123` to see admin controls (status dropdown, delete button) on each post.
+然后访问 `http://localhost:8787/?token=test123`，即可在每个帖子上看到管理员控件（状态下拉菜单、删除按钮）。
 
-## Manual Deploy
+## 手动部署
 
-If you prefer deploying manually instead of the one-click button:
+如果你更喜欢手动部署，而不是使用一键按钮：
 
-### 1. Create a D1 Database
+### 1. 创建 D1 数据库
 
 ```bash
 npx wrangler d1 create holler-db
 ```
 
-Copy the `database_id` from the output and update `wrangler.toml`:
+从输出中复制 `database_id`，并更新 `wrangler.toml`：
 
 ```toml
 [[d1_databases]]
@@ -49,86 +49,86 @@ database_id = "your-database-id-here"
 migrations_dir = "migrations"
 ```
 
-### 2. Deploy
+### 2. 部署
 
 ```bash
 npm run deploy
 ```
 
-This applies D1 migrations automatically before deploying.
+这会在部署前自动应用 D1 迁移。
 
-### 3. Set Up Turnstile (Optional)
+### 3. 设置 Turnstile（可选）
 
-Turnstile is Cloudflare's free, privacy-friendly CAPTCHA alternative. It protects the feedback form from spam.
+Turnstile 是 Cloudflare 提供的免费、隐私友好的 CAPTCHA 替代方案。它可以保护反馈表单免受垃圾提交。
 
-#### Create a Turnstile Widget
+#### 创建 Turnstile 小部件
 
-1. Go to the [Cloudflare dashboard](https://dash.cloudflare.com/) and navigate to **Turnstile**
-2. Select **Add widget**
-3. Enter a **widget name** (e.g., "Holler Feedback")
-4. Under **Hostname management**, add the domain(s) where Holler will be deployed
-5. Choose a **widget mode**:
-   - **Managed** (recommended) -- Cloudflare decides if interaction is needed
-   - **Non-Interactive** -- no visitor interaction, challenge runs in background
-   - **Invisible** -- no visible widget at all
-6. Click **Create**
-7. Copy your **site key** and **secret key**
+1. 前往 [Cloudflare 仪表板](https://dash.cloudflare.com/)，导航到 **Turnstile**
+2. 选择 **添加小部件**
+3. 输入**小部件名称**（例如 “Holler Feedback”）
+4. 在 **主机名管理** 下，添加将部署 Holler 的域名
+5. 选择**小部件模式**：
+   - **托管**（推荐）——由 Cloudflare 决定是否需要交互
+   - **非交互式**——访客无需交互，挑战在后台运行
+   - **不可见**——完全不显示小部件
+6. 点击 **创建**
+7. 复制你的 **站点密钥** 和 **密钥**
 
-#### Configure the Keys
+#### 配置密钥
 
 ```bash
 npx wrangler secret put TURNSTILE_SITE_KEY
-# Paste your site key when prompted
+# 提示时粘贴你的站点密钥
 
 npx wrangler secret put TURNSTILE_SECRET
-# Paste your secret key when prompted
+# 提示时粘贴你的密钥
 ```
 
-The site key is embedded in the HTML form to render the widget. The secret key is used server-side to verify tokens via the [Turnstile siteverify API](https://developers.cloudflare.com/turnstile/get-started/server-side-validation/).
+站点密钥会嵌入 HTML 表单中以渲染小部件。密钥用于服务端，通过 [Turnstile siteverify API](https://developers.cloudflare.com/turnstile/get-started/server-side-validation/) 验证令牌。
 
-### 4. Set Up Admin Auth (Optional)
+### 4. 设置管理员认证（可选）
 
 ```bash
 npx wrangler secret put ADMIN_TOKEN
-# Enter a secure token when prompted
+# 提示时输入一个安全令牌
 ```
 
-Access admin mode by appending `?token=YOUR_TOKEN` to any page URL.
+在任何页面 URL 后附加 `?token=YOUR_TOKEN` 即可进入管理员模式。
 
-## Environment Variables
+## 环境变量
 
-| Variable | Required | Description |
+| 变量 | 必需 | 描述 |
 |----------|----------|-------------|
-| `TURNSTILE_SITE_KEY` | No | Turnstile widget public key. Form submits without captcha when unset. |
-| `TURNSTILE_SECRET` | No | Turnstile secret key for server-side verification. Verification skipped when unset. |
-| `ADMIN_TOKEN` | No | Token for admin access. Admin routes return 503 when unset. |
+| `TURNSTILE_SITE_KEY` | 否 | Turnstile 小部件公钥。未设置时表单提交无需验证码。 |
+| `TURNSTILE_SECRET` | 否 | 用于服务端验证的 Turnstile 密钥。未设置时跳过验证。 |
+| `ADMIN_TOKEN` | 否 | 管理员访问令牌。未设置时管理员路由返回 503。 |
 
-For local development, put these in a `.dev.vars` file. For production, use `npx wrangler secret put <NAME>`.
+本地开发时，将这些放入 `.dev.vars` 文件。生产环境请使用 `npx wrangler secret put <NAME>`。
 
-## Commands
+## 命令
 
-| Command | Description |
+| 命令 | 描述 |
 |---------|-------------|
-| `npm run dev` | Local development with wrangler |
-| `npm run build` | Build for production (dry-run) |
-| `npm run deploy` | Apply migrations and deploy to Cloudflare Workers |
+| `npm run dev` | 使用 wrangler 进行本地开发 |
+| `npm run build` | 生产构建（试运行） |
+| `npm run deploy` | 应用迁移并部署到 Cloudflare Workers |
 
-## Project Structure
+## 项目结构
 
 ```
 holler/
 ├── src/
-│   ├── index.tsx          # Worker entry + Hono routes
-│   ├── db.ts              # D1 queries + types
+│   ├── index.tsx          # Worker 入口 + Hono 路由
+│   ├── db.ts              # D1 查询 + 类型
 │   └── components/
-│       ├── Layout.tsx      # HTML shell, HTMX/CSS includes
-│       ├── PostCard.tsx    # Feedback post display
-│       ├── PostForm.tsx    # Submission form
-│       └── VoteButton.tsx  # Vote toggle button
+│       ├── Layout.tsx      # HTML 外壳、HTMX/CSS 引入
+│       ├── PostCard.tsx    # 反馈帖展示
+│       ├── PostForm.tsx    # 提交表单
+│       └── VoteButton.tsx  # 投票切换按钮
 ├── migrations/
-│   └── 0001_initial.sql   # D1 schema (posts, votes, FTS5)
+│   └── 0001_initial.sql   # D1 模式（posts、votes、FTS5）
 ├── public/
-│   └── styles.css         # Minimal custom CSS
+│   └── styles.css         # 极简自定义 CSS
 ├── wrangler.toml
 └── package.json
 ```
